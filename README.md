@@ -1,24 +1,9 @@
-# RT
-This is a somewhat complex raytracing implementation. It supports  reflection, transparency, light spots, multiple light sources, complex objects, textures, CPU multi-threading, and soft shadows.
+# mymlx
 
+The MiniLibX library creates windows, manages events and draws pixels. This is a 'simulation' of the features of mlx written using OpenGL to port it to other systems.
+Currently it is not a complete simulation. Here is the list of it's main weaknesses:
 
-<p align="center">
-  <img width="80%" src="https://github.com/tpokalch/RT/blob/master/screens/soft.png">
-</p>
-
-
-<p align="center">
-  <img width="80%" src="https://raw.githubusercontent.com/tpokalch/RT/master/screens/Screen%20Shot%202019-09-28%20at%205.22.04%20AM.png">
-</p>
-
-
-<p align="center">
-  <img width="80%" src="https://raw.githubusercontent.com/tpokalch/RT/master/screens/all.png">
-</p>
-
-
-Click on video below:
-
-
-[![rtdemo](https://i.imgur.com/qXSK70v.jpg)](https://www.youtube.com/watch?v=3ymJMfN1hsI&feature=youtu.be)
-
+1. Only mouse_move and key_press events are supported.
+2. GLFW and MacOS graphics api don't share keycodes for the same keys, so if you want to press ESC, press the '5' key.
+3. Do not mlx_new_image() before mlx_new_window(). Mlx allows this, but this library does not.
+4. It is much slower than MLX.
