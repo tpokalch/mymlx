@@ -15,6 +15,7 @@ How to use:
 2. Download GLFW implementation of OpenGL and GLAD loader.
 3. Change #include <mlx.h> to #include "mymlx.h"
 4. Move call to mlx_new_window() to a place before mlx_new_image() in your mlx application
-5. Compile with glad.c, mymlx.c, and link dynamic libs. In my case -l glfw.3.3 -l GLEW.2.1.0
-6. You might need to delete all mentions of mlx functions not supported, like xpm file loading and events.
-7. Keep in mind that all keycodes are shuffled now.
+5. Have glfw3.dll in the same directory as your execuable.
+6. Compile with glad.c, mymlx.c, and link dynamic libs. In my case -l glfw.3.3 -l GLEW.2.1.0
+7. You might need to delete all mentions of mlx functions not supported, like xpm file loading and events.
+8. Keep in mind that all keycodes are shuffled now.
