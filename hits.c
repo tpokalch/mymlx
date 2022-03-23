@@ -104,7 +104,7 @@ t_dstpst	hit_complex(t_vector st, t_vector end, t_vector ray, t_object obj, t_gl
 
 	framecheck = hit_sphere(st, end, ray, *(obj.frame), g);
 //	printf("frame checked\n");
-	if (framecheck.obj.name == NULL)
+	if (framecheck.obj.name == nothing)
 	{
 		return (*(NANI(&t)));
 	}
@@ -114,7 +114,7 @@ t_dstpst	hit_complex(t_vector st, t_vector end, t_vector ray, t_object obj, t_gl
 //	printf("base 1 of first tri %f\n", obj.tris->base[1].yz;
 
 	objecthit(&t, st, end, obj.tris, obj.rd, g);
-	if (t.obj.name == NULL)
+	if (t.obj.name == nothing)
 		return (*(NANI(&t)));
 //	t.obj = obj;
 //	printf("returning %d %s\n", t.obj.id, t.obj.name);
@@ -225,7 +225,7 @@ t_dstpst	hit_tri(t_vector st, t_vector end, t_vector ray, t_object obj, t_global
 	}
 //	printf("assigning %d %s to obj\n", obj.id, obj.name);
 	if (con(g))
-		printf("tri hit, returning %d %s\n", obj.id, obj.name);
+		printf("tri hit, returning %d %u\n", obj.id, obj.name);
 	t.obj = obj;
 	return (t);
 }

@@ -39,6 +39,7 @@ int			con(t_global *g)
 	return (shot.x == g->ray->x && shot.y == g->ray->y);
 }
 
+/*
 int		mouse_press(int button, int x, int y, void *param)
 {
 	t_global *g;
@@ -59,6 +60,7 @@ int		mouse_press(int button, int x, int y, void *param)
 	}
 	return (1);
 }
+*/
 
 void		free_arr(char **arr)
 {
@@ -161,12 +163,13 @@ int		main(int argc, char **argv)
 	g.win_ptr = mymlx_new_window(g.mlx_ptr, WIDTH, HEIGHT, "window1");
 	g.img_ptr = mymlx_new_image(g.mlx_ptr, WIDTH, HEIGHT);
 	g.data_ptr = (int *)mymlx_get_data_addr(g.img_ptr, &g.bpp, &g.sz_l, &g.e);
+	printf("data_ptr is %p\n", g.data_ptr);
 //	g.win_ptr = mymlx_new_window(g.mlx_ptr, WIDTH, HEIGHT, "window1");
 	copy_tcps(&g);
 	start_threads(recalc, &g);
 	printf("address of g is %p\n", &g);
-//	mymlx_hook(g.win_ptr, 4, 4, mouse_press, &g);
-//	mymlx_hook(g.win_ptr, 2, 2, key_press, &g);
+	mymlx_hook(g.win_ptr, 4, 4, mouse_press, &g);
+	mymlx_hook(g.win_ptr, 2, 2, key_press, &g);
 	mymlx_hook(g.win_ptr, 6, 6, mouse_move, &g);
 	mymlx_loop(g.mlx_ptr);
 }

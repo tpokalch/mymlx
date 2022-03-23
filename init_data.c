@@ -64,8 +64,6 @@ void		ginit(t_global *g)
 	init_hits(hits);
 	g->hits = hits;
 	init_rays(&g->rays);
-	g->line_taken = (int *)malloc(sizeof(int) * HEIGHT);
-	ft_bzero(g->line_taken, 4 * WIDTH);
 	g->recursion = 0;
 	i = -1;
 	while (++i < CORES)
@@ -192,7 +190,7 @@ void		init_plane(t_vector *ctr, int i, t_global *g)
 	t_object a;
 
 	a = g->obj[i];
-	g->obj[i].name = "plane";
+	g->obj[i].name = plane;
 	g->obj[i].id = i;
 	g->obj[i].hit = &hit_plane;
 	g->obj[i].bright = &bright_plane;
@@ -292,8 +290,8 @@ t_object	*create_tris(t_vector **pts, t_object obj, t_global *g)
 			ret[retc].id = g->argc + retc + 1;
 			ret[retc + 1].id = g->argc + retc + 2;
 
-			ret[retc].name = "tri";
-			ret[retc + 1].name = "tri";
+			ret[retc].name = tri;
+			ret[retc + 1].name = tri;
 //			printf("just inited %s\n", ret[retc].name);
 //		ret[retc].nr = norm(cross(diff(ret[retc].bd1, ret[retc].bd3), diff(ret[retc].bd2, ret[retc].bd3)));
 
@@ -358,7 +356,7 @@ t_object	*init_frame(t_object obj, t_global *g)
 	t_object *ret;
 
 	ret = (t_object *)malloc(sizeof(t_object));
-	ret->name = "sphere";
+	ret->name = sphere;
 	ret->hit = &hit_sphere;
 	ret->ctr = obj.ctr;
 
@@ -383,7 +381,7 @@ t_object	*init_frame(t_object obj, t_global *g)
 void		init_complex(t_vector *ctr, int i, t_global *g)
 {
 //	printf("line len in init %d\n", (**(g->obj[i].pts)).len);
-	g->obj[i].name = "complex";
+	g->obj[i].name = complex;
 	g->obj[i].id = i;
 	g->obj[i].hit = &hit_complex;
 	g->obj[i].bright = &bright_plane;
@@ -406,7 +404,7 @@ void		init_complex(t_vector *ctr, int i, t_global *g)
 //	init_vector(&g->obj[i].nr, 1, 0, 0);
 
 	g->obj[i].frame = init_frame(g->obj[i], g);
-	printf("frame name is %s\n", g->obj[i].frame->name);
+	printf("frame enum is %u\n", g->obj[i].frame->name);
 //	init_tile(i, "./tiles/brick.xpm", g->obj, g);
 	g->obj[i].tile[0].data_ptr = NULL;
 	g->obj[i].re = 0.5;
@@ -419,7 +417,7 @@ void		init_complex(t_vector *ctr, int i, t_global *g)
 
 void		init_tri(t_vector *ctr, int i, t_global *g)
 {
-	g->obj[i].name = "tri";
+	g->obj[i].name = tri;
 	g->obj[i].id = i;
 	g->obj[i].hit = &hit_tri;
 	g->obj[i].bright = &bright_tri;
@@ -469,7 +467,7 @@ void		init_tri(t_vector *ctr, int i, t_global *g)
 
 void		init_cylinder(t_vector *ctr, int i, t_global *g)
 {
-	g->obj[i].name = "cylinder";
+	g->obj[i].name = cylinder;
 	g->obj[i].id = i;
 	g->obj[i].hit = &hit_cylinder;
 	g->obj[i].bright = &bright_cylinder;
@@ -491,10 +489,10 @@ void		init_cylinder(t_vector *ctr, int i, t_global *g)
 	init_vector(&g->obj[i].base[0], 1, 0, 0);
 	init_vector(&g->obj[i].base[1], 0, 1, 0);
 	init_vector(&g->obj[i].base[2], 0, 0, 1);
-	g->obj[i].spec = 4;
-	g->obj[i].re = 0.5;
+	g->obj[i].spec = 0;
+	g->obj[i].re = 0;
 	g->obj[i].trans = 0;
-	g->obj[i].soft = 1;
+	g->obj[i].soft = 0;
 
 	/*
 	g->obj[i].tile[0].ptr = mlx_xpm_file_to_image
@@ -526,7 +524,7 @@ void		init_cylinder(t_vector *ctr, int i, t_global *g)
 
 void		init_sphere(t_vector *ctr, int i, t_global *g)
 {
-	g->obj[i].name = "sphere";
+	g->obj[i].name = sphere;
 	g->obj[i].id = i;
 	g->obj[i].hit = &hit_sphere;
 	g->obj[i].bright = &bright_sphere;
@@ -537,9 +535,9 @@ void		init_sphere(t_vector *ctr, int i, t_global *g)
 	g->obj[i].ctr = &ctr[i];
 	printf("center %p\n", g->obj[i].ctr);
 	g->obj[i].trans = 0;
-	g->obj[i].re = 0.5;
-	g->obj[i].spec = 5;
-	g->obj[i].soft = 1;
+	g->obj[i].re = 0;
+	g->obj[i].spec = 0;
+	g->obj[i].soft = 0;
 	g->obj[i].prop[0] = do_tile_sphere;
 	g->obj[i].prop[1] = do_re;
 	g->obj[i].prop[2] = do_trans;
@@ -551,7 +549,7 @@ void		init_sphere(t_vector *ctr, int i, t_global *g)
 	printf("center is %f\n", g->obj[i].ctr->z);
 	g->obj[i].rd = 100;
 	g->obj[i].rd2 = g->obj[i].rd * g->obj[i].rd;
-	g->obj[i].color = rgb(0x000101);
+	g->obj[i].color = rgb(0x010100);
 	init_vector(&g->obj[i].ang, 0, 0, 0);
 	init_vector(&g->obj[i].base[0], 1, 0, 0);
 	init_vector(&g->obj[i].base[1], 0, 1, 0);
@@ -564,7 +562,7 @@ void		init_sphere(t_vector *ctr, int i, t_global *g)
 
 void		init_cone(t_vector *ctr, int i, t_global *g)
 {
-	g->obj[i].name = "cone";
+	g->obj[i].name = cone;
 	g->obj[i].id = i;
 	g->obj[i].hit = &hit_cone;
 	g->obj[i].bright = &bright_cone;

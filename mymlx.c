@@ -210,6 +210,11 @@ void    *mymlx_new_window(void *mlx_ptr, int width, int height, const char *name
 		return (NULL);
 	}
 
+	int frameBufferWidth, frameBufferHeight;
+
+	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
+	glViewport(0, 0, frameBufferWidth, frameBufferHeight);
+
 	printf("deref\n");
  	int ID = compileProgram(vertexShaderSource, fragmentShaderSource);
 	printf("compiled\n");
@@ -259,10 +264,26 @@ void    *mymlx_new_image(void *mlx_ptr, int width, int height)
 
  	glEnableVertexAttribArray(0);
 
-//	return ((void *)img_ptr);
+	return ((void *)img_ptr);
 
 
 }
+
+void	mymlx_destroy_image(void *mlx_ptr, void *img_ptr)
+{
+	free((int *)img_ptr);
+}
+
+
+void	mymlx_destroy_window(void *mlx_ptr, void *img_ptr)
+{
+	mlx *a = (mlx *)mlx_ptr;
+	GLFWwindow *window = a->window;
+	glfwDestroyWindow(window);
+}
+
+
+
 
 void    *mymlx_get_data_addr(void *img_ptr, int *bpp, int *sz_l, int *e)
 {
@@ -292,6 +313,7 @@ void    mymlx_put_image_to_window(void *mlx_ptr, void *win_ptr, int *img_ptr, in
 //	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
 }
 
+
 void    key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	printf("inside key callback\n");
@@ -310,7 +332,22 @@ void cursor_position_callback(GLFWwindow* window, double x, double y)
 //	glBufferData(GL_ARRAY_BUFFER, sizeof(int) * 1000, img_ptr, GL_DYNAMIC_DRAW);
 	printf("address in callback %p\n", user_pointer->param);
 	(user_pointer->f[6])(lround(x), lround(y), user_pointer->param);
-	glDrawArrays(GL_POINTS, 0, 1203);
+//	glDrawArrays(GL_POINTS, 0, 10);
+//	glDrawArrays(GL_POINTS, 0, 12030);
+
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	t_fun_and_arg *user_pointer = (t_fun_and_arg *)glfwGetWindowUserPointer(window);
+	double x,y;
+	glfwGetCursorPos(window, &x, &y);
+
+	printf("position is %f,%f\n", x, y);
+//	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+	{
+		(user_pointer->f[4])(button, lround(x), lround(y), user_pointer->param);
+	}
 }
 
 //					ignore i
@@ -324,8 +361,8 @@ void	mymlx_hook(void *win_ptr, int n, int i, int (*f) (), void *param)
 	glfwSetWindowUserPointer((GLFWwindow *)win_ptr, &user_pointer);
 	if (n == 2)
 		glfwSetKeyCallback(win_ptr, key_callback);
-//	else if (n == 4)
-//		glfwSetMouseButtonCallback(win_ptr, mouse_button_callback);
+	else if (n == 4)
+		glfwSetMouseButtonCallback(win_ptr, mouse_button_callback);
 	else if (n == 6)
 		glfwSetCursorPosCallback(win_ptr, cursor_position_callback);
 }

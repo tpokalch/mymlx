@@ -187,7 +187,7 @@ void	objecthit(t_dstpst *ret, t_vector st, t_vector end, t_object *obj, int objc
  		}
 	}
 	if (!legal_hit)
-		ret->obj.name = NULL;
+		ret->obj.name = nothing;
 }
 
 void		*toimg(void *tcp)
@@ -211,7 +211,7 @@ void		*toimg(void *tcp)
 //for debug
 			init_vector(g->ray, i - WIDTH_2, HEIGHT_2 - j, g->ray->z);
 //
-			if (g->hits[j][i]->obj.name != NULL)
+			if (g->hits[j][i]->obj.name != nothing)
 			{
 				bright = (g->hits[j][i])->obj.
 				simple_bright(*g->cam_pos, (g->hits[j][i])->hit, &(g->hits)[j][i]->obj, g);
@@ -239,7 +239,7 @@ void		move_row(int j, int jwidth, t_global *g)
 			g);
 			g->hits[j][i]->hit = sum(scale(ret.dst, *g->rays[j][i]), *g->cam_pos);
 			g->hits[j][i]->obj = ret.obj;
-			if (g->hits[j][i]->obj.name != NULL)
+			if (g->hits[j][i]->obj.name != nothing)
 			{
 				bright = ret.obj.bright(*g->cam_pos, (g->hits[j][i])->hit, &(g->hits)[j][i]->obj, g);
 				g->data_ptr[jwidth + i] = color(bright.bri , bright.col);
@@ -311,7 +311,7 @@ void		recalc_row(int jwidth, int j, t_global *g)
 			objecthit(&ret, *g->cam_pos, sum(ray, *g->cam_pos), g->obj, g->argc + 1, g);
 			g->hits[j][i]->obj = ret.obj;
 			g->hits[j][i]->hit = sum(scale(ret.dst, *g->rays[j][i]), *g->cam_pos);
-			if (g->hits[j][i]->obj.name != NULL)
+			if (g->hits[j][i]->obj.name != nothing)
 			{
 				bright = g->hits[j][i]->obj.
 				bright(*g->cam_pos, g->hits[j][i]->hit, &(g->hits)[j][i]->obj, g);

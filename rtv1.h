@@ -10,28 +10,104 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mymlx.h"
 #include <math.h>
+#include "mymlx.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "libft/libft.h"
 #include <pthread.h>
 #include <fcntl.h>
 #include <time.h>
-
-#define WIDTH 400
+/*
+#define WIDTH 800
 #define HEIGHT 400
 #define HEIGHT_2 200
-#define WIDTH_2 200
+#define WIDTH_2 400
+
+*/
+#define WIDTH 1000
+#define HEIGHT 500
+#define HEIGHT_2 250
+#define WIDTH_2 500
+
 
 #define TASK 20
 #define STRIPS HEIGHT / TASK
-#define CORES 1
+#define CORES 4 
 #define M_T 6.28318530718
 #define MAX_REC 4
+#define RECORD_VIDEO 0
+
+// these are keycodes for the project onmy old mac,
+// i have to rewrite them for my 2017 mac
+
+/*
+#define A_KEY 0
+#define S_KEY 1
+#define D_KEY 2
+#define F_KEY 3
+#define W_KEY 13
+#define SPACE_KEY 49
+#define ESC_KEY 53
+#define J_KEY 38
+#define K_KEY 40
+#define L_KEY 37
+#define I_KEY 34
+#define O_KEY 31
+#define BRA_KEY 43
+#define KET_KEY 47
+#define UP_KEY 126
+#define DOWN_KEY 125
+#define LEFT_KEY 123
+#define RIGHT_KEY 124
+#define H_KEY 4
+#define G_KEY 5
+#define R_KEY 15
+#define T_KEY 17
+#define Y_KEY 16
+*/
+
+#define LEFT_BUTTON GLFW_MOUSE_BUTTON_LEFT
+#define RUGHT_BUTTON GLFW_MOUSE_BUTTON_RIGHT
+
+#define A_KEY GLFW_KEY_A
+#define S_KEY GLFW_KEY_S
+#define D_KEY GLFW_KEY_D
+#define F_KEY GLFW_KEY_F
+#define W_KEY GLFW_KEY_W
+#define SPACE_KEY GLFW_KEY_SPACE
+#define ESC_KEY GLFW_KEY_ESCAPE  
+#define J_KEY GLFW_KEY_J
+#define K_KEY GLFW_KEY_K
+#define L_KEY GLFW_KEY_L
+#define I_KEY GLFW_KEY_I
+#define O_KEY GLFW_KEY_O
+#define BRA_KEY 0 //i don't know
+#define KET_KEY 0
+#define UP_KEY GLFW_KEY_UP
+#define DOWN_KEY GLFW_KEY_DOWN
+#define LEFT_KEY GLFW_KEY_LEFT
+#define RIGHT_KEY GLFW_KEY_RIGHT
+#define H_KEY GLFW_KEY_H
+#define G_KEY GLFW_KEY_G
+#define R_KEY GLFW_KEY_R
+#define T_KEY GLFW_KEY_T
+#define Y_KEY GLFW_KEY_Y
+
+
+typedef enum e_name
+{
+	plane,		// 0
+	sphere,		// 1
+	cylinder,	// 2
+	cone,		// 3
+	complex,	// 4
+	tri,		// 5
+	nothing		// 6
+}	t_name;
+
 
 typedef	struct	s_vector t_vector;
-
 
 struct s_vector
 {
@@ -42,8 +118,9 @@ struct s_vector
 };
 
 
+// global varible for debugging
 t_vector		shot;
-int			mousex;
+//int			mousex;
 
 
 
@@ -65,7 +142,7 @@ double				dot(t_vector a, t_vector b);
 t_vector			diff(t_vector a, t_vector b);
 t_vector			sum(t_vector a, t_vector b);
 t_vector			norm(t_vector a);
-int					color(double b, t_vector c);
+int					color(int b, t_vector c);
 t_vector			scale(double a, t_vector b);
 void				ginit(t_global *g);
 void				init_plane(t_vector *ctr, int i, t_global *g);
@@ -90,12 +167,14 @@ int					init_objects(t_vector *ctr, char **argv, t_global *g);
 int					obj_traver(char **argv, char *c);
 void				init_rays(t_vector ****ray);
 void				init_hits(t_objecthit ***hits);
+int					mouse_press(int button, int x, int y, void *param);
 int					key_press(int kk, void *param);
 void				copy_tcps(t_global *g);
 void				copy(t_global *tcps, t_global *g);
 int					move_obj(int kk, t_global *g);
 int					move_phys(int keycode, t_global *g);
 void				move_cam(char s, t_global *g);
+int				campos(t_global *g);
 int					free_hits(t_global *g);
 int					start_threads(void *f, t_global *g);
 int					mouse_move(int x, int y, void *param);
@@ -103,16 +182,21 @@ void				debug(t_global *g);
 void				*recalc(void *p);
 void				*move(void *p);
 void				*toimg(void *tcp);
-void				objecthit(t_dstpst *ret, t_vector st, t_vector end, t_object *obj, int objc, t_global *g);
 
-t_dstpst			hit_plane(t_vector st, t_vector end, t_vector ray, t_object obj, t_global *g);
+void				objecthit(t_dstpst *ret, t_vector st, t_vector end,  t_object *obj, int objc, t_global *g);
+
+t_dstpst			hit_plane(t_vector st, t_vector end,  t_vector ray, t_object obj, t_global *g);
+t_dstpst			hit_sphere(t_vector st, t_vector end,  t_vector ray, t_object obj, t_global *g);
+t_dstpst			hit_cylinder(t_vector st, t_vector end,  t_vector ray, t_object obj, t_global *g);
+t_dstpst			hit_cone(t_vector st, t_vector end,  t_vector ray, t_object obj, t_global *g);
+t_dstpst			hit_tri(t_vector st, t_vector end,  t_vector ray, t_object obj, t_global *g);
+t_dstpst			hit_complex(t_vector st, t_vector end,  t_vector ray, t_object obj, t_global *g);
+
 t_colbri				simple_bright_plane(t_vector st, t_vector hit, t_object *obj, t_global *g);
 t_colbri				bright_plane(t_vector st, t_vector hit, t_object *obj, t_global *g);
 t_colbri					bright_sphere(t_vector st, t_vector hit, t_object *obj, t_global *g);
 t_colbri					simple_bright_sphere(t_vector st, t_vector hit, t_object *obj, t_global *g);
 
-t_dstpst			hit_sphere(t_vector st, t_vector end, t_vector ray, t_object obj, t_global *g);
-t_dstpst			hit_cylinder(t_vector st, t_vector end, t_vector ray, t_object obj, t_global *g);
 t_colbri					bright_cylinder(t_vector st, t_vector hit, t_object *obj, t_global *g);
 t_colbri					simple_bright_cylinder(t_vector st, t_vector hit, t_object *obj, t_global *g);
 t_colbri					bright_cone(t_vector st, t_vector hit, t_object *obj, t_global *g);
@@ -120,10 +204,6 @@ t_colbri					simple_bright_cone(t_vector st, t_vector hit, t_object *obj, t_glob
 t_colbri					bright_tri(t_vector st, t_vector hit, t_object *obj, t_global *g);
 t_colbri					simple_bright_tri(t_vector st, t_vector hit, t_object *obj, t_global *g);
 
-
-t_dstpst			hit_cone(t_vector st, t_vector end, t_vector ray, t_object obj, t_global *g);
-t_dstpst			hit_tri(t_vector st, t_vector end, t_vector ray, t_object obj, t_global *g);
-t_dstpst			hit_complex(t_vector st, t_vector end, t_vector ray, t_object obj, t_global *g);
 
 t_vector			get_normal_sphere(t_vector point, t_object *obj);
 t_vector			get_normal_plane(t_vector point, t_object *obj);
@@ -188,7 +268,8 @@ typedef	struct		s_tile
 
 typedef struct		s_object
 {
-	char			*name;
+//	char			*name;
+	t_name			name;
 	int				id;
 	int				cam_pos;
 	t_dstpst		(*hit)(t_vector, t_vector, t_vector, t_object, t_global *g);
@@ -196,20 +277,25 @@ typedef struct		s_object
 	t_colbri				(*simple_bright)(t_vector, t_vector, t_object *, struct s_global *);
 	t_vector				(*get_normal)(t_vector, t_object *);
 
-
+//	bd1, bd2, bd3 are boundaries ofa triangle if an object is a triangle
 	t_vector		bd1;
 	t_vector		bd2;
 	t_vector		bd3;
 	t_vector		base[3];
 	t_vector		nr;
+	t_vector		real_nr;
 	t_tile			tile[15];
+	t_tile			normal_map;
 	t_vector		*ctr;
 	t_vector		ang;
 	t_vector		color;
 	int				rd;
 	int				rd2;
+	double				rd_1; // 1 / rd
+
 	void			(*prop[3])();
 	t_vector		**pts;
+//	if an object is complex it consists of triangle objects
 	t_object		*tris;
 	double			re;
 	double			trans;
@@ -245,6 +331,7 @@ typedef struct		s_global
 	int				light_switch;
 	t_dstpst		cone[2];
 	t_vector		_0015;
+	t_vector		_1500;
 	t_vector		white;
 	t_vector		base[3];
 	t_vector		*ray;
@@ -253,6 +340,8 @@ typedef struct		s_global
 	double			*liz;
 	t_vector		*angle;
 	t_vector		*normal;
+	t_vector		*right;
+
 	t_object		*obj;
 	t_object		*all_obj;
 	t_objecthit		***hits;
@@ -264,12 +353,13 @@ typedef struct		s_global
 	int				prim;
 	int				ambient;
 	int				my_line;
-	int				*line_taken;//size of number of tasks
+//	int				*line_taken;//size of number of tasks
 	int				mip_map;
 	pthread_mutex_t			mutex;
 	int				lights;
-	t_vector			*hitli;
-	t_vector			*savehitli;
+	t_vector			spec_con;
+//	t_vector			*hitli;
+//	t_vector			*savehitli;
 	t_vector			prev;
 	double				*cosa;
 	t_vector			*ctrli;
