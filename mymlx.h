@@ -12,8 +12,16 @@
 
 typedef struct  s_mlx
 {
-        int width;
+	int width;
         int height;
+
+	// in pixels! use getFrameBufferSize to get
+	// size of your window in real pixels!
+ 
+        int width_in_pixels;
+        int height_in_pixels;
+
+
 
         GLFWwindow *window;
 	int ID;

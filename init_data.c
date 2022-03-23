@@ -549,6 +549,7 @@ void		init_sphere(t_vector *ctr, int i, t_global *g)
 	printf("center is %f\n", g->obj[i].ctr->z);
 	g->obj[i].rd = 100;
 	g->obj[i].rd2 = g->obj[i].rd * g->obj[i].rd;
+        g->obj[i].rd_1 = 1 / (double)g->obj[i].rd;
 	g->obj[i].color = rgb(0x010100);
 	init_vector(&g->obj[i].ang, 0, 0, 0);
 	init_vector(&g->obj[i].base[0], 1, 0, 0);

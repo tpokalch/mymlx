@@ -202,6 +202,10 @@ void		init_bri(int *bri, t_vector *hitli, t_vector nrm, t_global *g)
 
 	i = 0;
 	*bri = 0;
+	if (con(g))
+	{
+		printf("hitli %f,%f,%f\nnrm %f,%f,%f\n", hitli[0].x,  hitli[0].y,  hitli[0].z, nrm.x, nrm.y, nrm.z);
+	}
 	while (i < g->lights)
 	{
 		*bri += fmax(round(255 * dot(norm(hitli[i]), nrm)), g->ambient);
@@ -551,6 +555,10 @@ t_colbri	bright_sphere(t_vector st, t_vector hit, t_object *obj, t_global *g)
 	t_vector	hitli[g->lights];
 
 	g->recursion[obj->id]++;
+	if (con(g))
+	{
+		printf("inside bright sphere\n");
+	}
 	init_hitli(hitli, hit, g);
 	obj->nr = obj->real_nr = scale(obj->rd_1, diff(hit, *obj->ctr));
 
@@ -583,6 +591,7 @@ t_colbri	bright_sphere(t_vector st, t_vector hit, t_object *obj, t_global *g)
 	if(con(g))
 	{
 		printf("bri is %d\n", ret.bri);
+		printf("calling obstructed\n");
 	}
 	obstructed(&ret, hit, hitli, reflrayv, *obj, g);
 	g->recursion[obj->id] = 0;

@@ -75,24 +75,56 @@ const char *vertexShaderSource =
 	
 	"}\n"
 
+
+//	find out which gl_VertexID corresponds to which pair of pixel
 	"void main()\n"
 	"{\n"
+/*
+//		"width = width * 2;\n"
+//		"height = height * 2;\n"
+
+		"int pixel1 = 1;\n"
+		"int pixel2 = 2;\n"
+		"float xpixel1 = pixel1 % width ;\n"
+		"float ypixel1 = pixel1 / width;\n"
+
+//		now xpixel and ypixel are in the range [0, 1]
+		"xpixel1 = ((2 * xpixel1) / float(width) - 1);\n"
+		"ypixel1 = ((-2 * ypixel1)  / float(height) + 1);\n"
+
+		"float xpixel2 = pixel2 % width;\n"
+		"float ypixel2 = pixel2 / width;\n"
+
+//		now xpixel and ypixel are in the range [0, 1]
+		"xpixel2 = ((2 * xpixel2) / float(width) - 1);\n"
+		"ypixel2 = ((-2 * ypixel2)  / float(height) + 1);\n"
+
+		"if (xpixel1 == xpixel2)\n"
+		"{\n"
+		"	outColor = vec3(0, 0, 1);\n"
+		"}\n"
+		"else\n"
+		"	outColor = vec3(0, 1, 0);\n"
+*/
+////////////////////////////////////////////////////////////////
 		"float xpixel = (gl_VertexID % width);\n"
 		"float ypixel = (gl_VertexID / width);\n"
 
 //		now xpixel and ypixel are in the range [0, 1]
-		"xpixel = xpixel  / float(width);\n"
-		"ypixel = ypixel  / float(height);\n"
+		"xpixel = ((xpixel) / float(width) );\n"
+		"ypixel = ((ypixel)  / float(height));\n"
 
 //		now [-1, 1]
+
 		"xpixel = 2 * xpixel - 1;\n"	
 		"ypixel = -2 * ypixel + 1;\n"
 
-		"gl_Position = vec4(xpixel, ypixel, 0, 1);\n"
+		"gl_Position = vec4((xpixel), (ypixel), 1, 1);\n"
 //		"gl_Position = vec4(0, 0, 0, 1);\n"
- //   "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+//	"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
 		"outColor = rgb(aColor);\n"
 //		"outColor = vec3(1, 0, 0);\n"
+
 	"}\0";
 
 const char *fragmentShaderSource =
@@ -212,8 +244,11 @@ void    *mymlx_new_window(void *mlx_ptr, int width, int height, const char *name
 
 	int frameBufferWidth, frameBufferHeight;
 
-	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
-	glViewport(0, 0, frameBufferWidth, frameBufferHeight);
+	glfwGetFramebufferSize(window, &(((mlx *)mlx_ptr)->width_in_pixels), &(((mlx *)mlx_ptr)->height_in_pixels));
+	printf("frame buffer: %d,%d\n", ((mlx *)mlx_ptr)->width_in_pixels, ((mlx *)mlx_ptr)->height_in_pixels);
+
+//	this os for when the image is on quarter screen
+//	glViewport(0, 0, ((mlx *)mlx_ptr)->width_in_pixels, ((mlx *)mlx_ptr)->height_in_pixels);
 
 	printf("deref\n");
  	int ID = compileProgram(vertexShaderSource, fragmentShaderSource);
@@ -222,7 +257,7 @@ void    *mymlx_new_window(void *mlx_ptr, int width, int height, const char *name
 
 //      glEnable(GL_DEPTH_TEST);
 //	this is sizecallback
-//	glViewport(0, 0, width, height);
+	glViewport(0, 0, width, height);
 
 /*      glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, cursor_position_callback);
@@ -316,7 +351,7 @@ void    mymlx_put_image_to_window(void *mlx_ptr, void *win_ptr, int *img_ptr, in
 
 void    key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	printf("inside key callback\n");
+//	printf("inside key callback\n");
 	if (action == 0)
 		return ;
 	t_fun_and_arg *user_pointer = (t_fun_and_arg *)glfwGetWindowUserPointer(window);
@@ -326,11 +361,11 @@ void    key_callback(GLFWwindow* window, int key, int scancode, int action, int 
 
 void cursor_position_callback(GLFWwindow* window, double x, double y)
 {
-	printf("inside callback cursor is %f,%f\n", x, y);
+//	printf("inside callback cursor is %f,%f\n", x, y);
 	t_fun_and_arg *user_pointer = (t_fun_and_arg *)glfwGetWindowUserPointer(window);
 //	key_press(key, param);
 //	glBufferData(GL_ARRAY_BUFFER, sizeof(int) * 1000, img_ptr, GL_DYNAMIC_DRAW);
-	printf("address in callback %p\n", user_pointer->param);
+//	printf("address in callback %p\n", user_pointer->param);
 	(user_pointer->f[6])(lround(x), lround(y), user_pointer->param);
 //	glDrawArrays(GL_POINTS, 0, 10);
 //	glDrawArrays(GL_POINTS, 0, 12030);
@@ -399,7 +434,7 @@ void    mymlx_loop(void *mlx_ptr)
 //		printf("%d\n", numberofpixels);
 
 		processInput(MLX->window);
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(1, 0.0f, 0.0f, 1.0f);
 	        glClear(GL_COLOR_BUFFER_BIT);
 //		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		int widthlocation = glGetUniformLocation(MLX->ID, "width");
@@ -418,16 +453,6 @@ void    mymlx_loop(void *mlx_ptr)
 		glfwPollEvents();
 	}
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
