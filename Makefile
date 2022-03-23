@@ -29,17 +29,20 @@ $(NAME):
 #	clang -g $(FLAGS) -I libft/includes -o initialize_points.o -c initialize_points.c
 #	clang -g $(FLAGS) -I libft/includes -o free_points.o -c free_points.c
 
-
-#	deleted gcc -I /usr/local/include
-	clang -g -std=c11 $(SRC) /Users/taraspokalchuk/Downloads/glad/src/glad.c -o rtv1 -L ./libft -lft -lglfw3 -framework OpenGL -framework AppKit -framework IOKit
+#	lower is for MacOS
+#	clang -g -std=c11 $(SRC) /Users/taraspokalchuk/Downloads/glad/src/glad.c -o rtv1 -L ./libft -lft -lglfw3 -framework OpenGL -framework AppKit -framework IOKit
+#	this is for Windows
+	gcc $(SRC) -g C:\src\glad.c -o rtv1 "C:\Program Files\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\x86_64-w64-mingw32\lib\glfw3.dll" ./libft/*.c -march=x86-64
 
 clean:
 #	make -C libft/ clean
-	rm -rf $(OBJ)
+#	rm -rf $(OBJ)
 
 fclean: clean
 #	make -C libft/ fclean
-	rm -rf $(NAME)
+#	rm -rf $(NAME)
+	del $(NAME)
 
 re: fclean all
-	rm -rf $(OBJ)
+#	rm -rf $(OBJ)
+	del $(OBJ)
