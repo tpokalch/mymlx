@@ -1,6 +1,6 @@
-OBJ = mymlx.o main.o lin_alg.o color.o init_data.o events.o central.o comline_obj.o check_arg.o hits.o brights.o memory.o linalg1.o entex.o create_points.o initialize_points.o free_points.o
+OBJ = mymlx.o main.o lin_alg.o color.o init_data.o events.o central.o comline_obj.o check_arg.o hits.o brights.o memory.o linalg1.o entex.o create_points.o free_points.o
 
-SRC = mymlx.c main.c lin_alg.c color.c init_data.c events.c central.c comline_obj.c check_arg.c hits.c brights.c memory.c linalg1.c entex.c create_points.c initialize_points.c free_points.c
+SRC = mymlx.c main.c lin_alg.c color.c init_data.c events.c central.c comline_obj.c check_arg.c hits.c brights.c memory.c linalg1.c entex.c create_points.c free_points.c
 
 
 

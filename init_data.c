@@ -256,6 +256,136 @@ t_object	*create_tris(t_vector **pts, t_object obj, t_global *g)
 	t_object *ret;
 	int len;
 
+//	len is width of the rectangular map. obj.ptdim is initialized in create points.c.
+//	must devide by 20 to get the length
+	len = obj.ptdim.x / 20;
+	h = arrheight((void **)pts);
+//	(len - 1) * (h - 1) * 2 is the number of triangles that can be created
+//	from map len x h
+	if (!(ret = (t_object *)malloc(sizeof(t_object) * ((len - 1)* (h - 1) * 2 + 1))))
+	{
+		printf("MALLOC FAIL\n");
+		return (NULL);
+	}
+	printf("allocated %d t_objects for a complex object\n", (len - 1)* (h - 1) * 2 + 1);
+	j = 0;
+	i = 0;
+	// start from 1 because object with id 0 is ignored
+	retc = 1;
+	init_vector(&smallspace, 0.0001, 0.0001, 0.0001);
+//	init_vector(&smallspace, 0, 0, 0);
+	while (*(pts + j + 1))
+	{
+		i = 0;
+		while (i + 1 < len) // each cycle 2 triangles with tangential sides are created
+				//	this is why you have to check if (i + 1) point exists
+		{
+			//each cycle 2 triangles with tangential sides are created
+
+			//		##
+			//		#*
+			ret[retc].bd1 = sum(rotate(*(*(pts + j) + i), obj.ang), *obj.ctr);
+			ret[retc].bd2 = sum(rotate(*(*(pts + j) + i + 1), obj.ang), *obj.ctr);
+			ret[retc].bd3 = sum(rotate(*(*(pts + j + 1) + i), obj.ang), *obj.ctr);
+
+//			printf("three points of first triangle \n%f,%f,%f\n%f,%f,%f\n%f,%f,%f\n", ret[retc].bd1.x, ret[retc].bd1.y, ret[retc].bd1.z, ret[retc].bd2.x, ret[retc].bd2.y, ret[retc].bd2.z, ret[retc].bd3.x, ret[retc].bd3.y, ret[retc].bd3.z);
+
+			//		*#
+			//		##
+			ret[retc + 1].bd1 = sum(rotate(sum(*(*(pts + j + 1) + i + 1), smallspace), obj.ang), *obj.ctr);
+			ret[retc + 1].bd2 = sum(rotate(sum(*(*(pts + j) + i + 1), smallspace), obj.ang), *obj.ctr);
+			ret[retc + 1].bd3 = sum(rotate(sum(*(*(pts + j + 1) + i), smallspace), obj.ang), *obj.ctr);
+
+//			printf("three points of second triangle \n%f,%f,%f\n%f,%f,%f\n%f,%f,%f\n", ret[retc + 1].bd1.x, ret[retc + 1].bd1.y, ret[retc + 1].bd1.z, ret[retc + 1].bd2.x, ret[retc + 1].bd2.y, ret[retc + 1].bd2.z, ret[retc + 1].bd3.x, ret[retc + 1].bd3.y, ret[retc + 1].bd3.z);
+
+
+			ret[retc].hit = &hit_tri;
+			ret[retc + 1].hit = &hit_tri;
+
+			ret[retc].bright = &bright_tri;
+			ret[retc].simple_bright = &bright_tri;
+			ret[retc + 1].bright = &bright_tri;
+//CHANGE BACK TO SIMPLE LATE
+			ret[retc + 1].simple_bright = &bright_tri;
+
+			ret[retc].id = g->argc + retc + 1;
+			ret[retc + 1].id = g->argc + retc + 2;
+
+			ret[retc].name = tri/*5*/;
+			ret[retc + 1].name = tri/*5*/;
+//			printf("just inited %s\n", ret[retc].name);
+//		ret[retc].nr = norm(cross(diff(ret[retc].bd1, ret[retc].bd3), diff(ret[retc].bd2, ret[retc].bd3)));
+
+		ret[retc].base[0] = norm(diff(ret[retc].bd1, ret[retc].bd3));
+		ret[retc].base[2] = norm(diff(ret[retc].bd2, ret[retc].bd3));
+		ret[retc].base[1] = norm(cross(diff(ret[retc].bd1, ret[retc].bd3), diff(ret[retc].bd2, ret[retc].bd3)));
+//		ret[retc].base[1] = scale(-1, norm(cross(diff(ret[retc].bd1, ret[retc ].bd3), diff(ret[retc].bd2, ret[retc].bd3))));
+
+
+
+//		ret[retc + 1].nr = norm(cross(diff(ret[retc + 1].bd1, ret[retc + 1].bd3), diff(ret[retc + 1].bd2, ret[retc + 1].bd3)));
+
+
+		ret[retc + 1].base[0] = norm(diff(ret[retc + 1].bd1, ret[retc + 1].bd3));
+		ret[retc + 1].base[2] = norm(diff(ret[retc + 1].bd2, ret[retc + 1].bd3));
+		ret[retc + 1].base[1] = norm(cross(diff(ret[retc + 1].bd1, ret[retc + 1].bd3), diff(ret[retc + 1].bd2, ret[retc + 1].bd3)));
+	//	ret[retc].base[1] = scale(-1, ret[retc].base[1]);
+//	ret[retc + 1].base[1] = scale(-1, norm(cross(diff(ret[retc + 1].bd1, ret[retc + 1].bd3), diff(ret[retc + 1].bd2, ret[retc + 1].bd3))));
+
+
+		ret[retc].ctr = obj.ctr;
+		ret[retc + 1].ctr = obj.ctr;
+
+//		init_tile(i, "./tiles/brick.xpm", ret + retc, g);
+//		init_tile(i, "./tiles/brick.xpm", ret + retc + 1, g);
+
+		ret[retc].tile[0] = obj.tile[0];
+		ret[retc + 1].tile[0] = obj.tile[0];
+
+
+//		ret[retc + 1].tile[0].data_ptr = NULL;
+//		ret[retc].tile[0].data_ptr = NULL;
+
+//		printf("end friing tile\n");
+		ret[retc].color = obj.color;
+		ret[retc + 1].color = rgb(0x010000);
+
+
+		ret[retc].re = obj.re;
+		ret[retc + 1].re = obj.re;
+
+		ret[retc].trans = obj.trans;
+		ret[retc + 1].trans = obj.trans;
+
+		ret[retc].spec = obj.spec;
+		ret[retc + 1].spec = obj.spec;
+
+		i++; //process the square to the right
+		retc = retc + 2; //but since 2 triangles were create, skip over 1 place in obj[]
+		}
+		j++;
+	}
+//	ret->rd is the number of objects that is passed to objecthit in hit_complex
+	(ret)->rd = ((len - 1)* (h - 1)* 2 + 1);
+//	printf("there are %d tris\n", ret->rd);
+	return (ret);
+}
+
+/*
+t_object	*create_tris(t_vector **pts, t_object obj, t_global *g)
+{
+	printf("starting to create tri\n");
+//	printf("line len is %d\n", (**pts).len);
+	int j;
+	int i;
+	int h;
+	int retc;
+	t_vector rc;
+	t_vector smallspace;
+	t_vector pt;
+	t_object *ret;
+	int len;
+
 	len = obj.ptdim.x / 20;
 	h = arrheight((void **)pts);
 	ret = (t_object *)malloc(sizeof(t_object) * (len * h * 2 + 1));
@@ -350,6 +480,7 @@ t_object	*create_tris(t_vector **pts, t_object obj, t_global *g)
 
 
 }
+*/
 
 t_object	*init_frame(t_object obj, t_global *g)
 {
@@ -407,11 +538,11 @@ void		init_complex(t_vector *ctr, int i, t_global *g)
 	printf("frame enum is %u\n", g->obj[i].frame->name);
 //	init_tile(i, "./tiles/brick.xpm", g->obj, g);
 	g->obj[i].tile[0].data_ptr = NULL;
-	g->obj[i].re = 0.5;
-	g->obj[i].spec = 4;
+	g->obj[i].re = 0;
+	g->obj[i].spec = 0;
 	g->obj[i].trans = 0;
 	g->obj[i].tris = create_tris(g->obj[i].pts, g->obj[i], g);
-	g->obj[i].rd = g->obj[i].tris->rd - 1;
+	g->obj[i].rd = g->obj[i].tris->rd;
 }
 
 
