@@ -12,6 +12,7 @@
 
 #include "rtv1.h"
 
+
 int			brg(t_vector a)
 {
 //	return (a.z + a.y * 256 + a.x * 65536);

@@ -160,16 +160,17 @@ int		main(int argc, char **argv)
 	ginit(&g);
 	if (!check_arg(argv, argc, &g, ctr))
 		return (0);
+
 	g.win_ptr = mymlx_new_window(g.mlx_ptr, WIDTH, HEIGHT, "window1");
 	g.img_ptr = mymlx_new_image(g.mlx_ptr, WIDTH, HEIGHT);
 	g.data_ptr = (int *)mymlx_get_data_addr(g.img_ptr, &g.bpp, &g.sz_l, &g.e);
 	printf("data_ptr is %p\n", g.data_ptr);
-//	g.win_ptr = mymlx_new_window(g.mlx_ptr, WIDTH, HEIGHT, "window1");
 	copy_tcps(&g);
 	start_threads(recalc, &g);
 	printf("address of g is %p\n", &g);
 	mymlx_hook(g.win_ptr, 4, 4, mouse_press, &g);
 	mymlx_hook(g.win_ptr, 2, 2, key_press, &g);
 	mymlx_hook(g.win_ptr, 6, 6, mouse_move, &g);
+
 	mymlx_loop(g.mlx_ptr);
 }

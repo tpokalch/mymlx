@@ -536,7 +536,7 @@ void		init_sphere(t_vector *ctr, int i, t_global *g)
 	printf("center %p\n", g->obj[i].ctr);
 	g->obj[i].trans = 0;
 	g->obj[i].re = 0;
-	g->obj[i].spec = 0;
+	g->obj[i].spec = 0; //4 is good
 	g->obj[i].soft = 0;
 	g->obj[i].prop[0] = do_tile_sphere;
 	g->obj[i].prop[1] = do_re;
@@ -551,7 +551,15 @@ void		init_sphere(t_vector *ctr, int i, t_global *g)
 	g->obj[i].rd2 = g->obj[i].rd * g->obj[i].rd;
         g->obj[i].rd_1 = 1 / (double)g->obj[i].rd;
 	g->obj[i].color = rgb(0x010100);
-	init_vector(&g->obj[i].ang, 0, 0, 0);
+	t_vector mycolor;
+	init_vector(&mycolor, 0,0.5,0.5);
+//	init_vector(g->obj[i].color, 0,0.5,0.5);
+	printf("mycolor is %f,%f,%f\n", mycolor.x,  mycolor.y,  mycolor.z );
+/*	g->obj[i].color = mycolor;
+	int intcolor = brg(scale(255, mycolor));
+	printf("color in integer is %d\n", intcolor);
+	printf("color of sphere in hex is %#x\n", intcolor);
+*/	init_vector(&g->obj[i].ang, 0, 0, 0);
 	init_vector(&g->obj[i].base[0], 1, 0, 0);
 	init_vector(&g->obj[i].base[1], 0, 1, 0);
 	init_vector(&g->obj[i].base[2], 0, 0, 1);

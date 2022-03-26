@@ -265,15 +265,18 @@ int		start_threads(void *f, t_global *g)
 	if (WIDTH > 2500)
 	{
 		alias(g->data_ptr, g->data_ptr, WIDTH, HEIGHT, WIDTH, HEIGHT);
+		alias(g->data_ptr, g->data_ptr, WIDTH, HEIGHT, WIDTH, HEIGHT);
 		printf("doing alias2\n");
 	}
-	if (WIDTH > 750)
+/*	if (WIDTH > 750)
 		alias(g->data_ptr, g->data_ptr, WIDTH, HEIGHT, WIDTH, HEIGHT);
+*/
 /*	for (int i = 0; i < 10; i++)
 	{
 //		printf("%d pixel color is %d\n", i, g->data_ptr[i]);
 	}
 */
+	printf("putting image to window\n");
 	mymlx_put_image_to_window(g->mlx_ptr, g->win_ptr, g->data_ptr, 0, 0);
 	t[1] = clock();
 	printf("fps %f\n",1 / ((double)(t[1] - t[0]) / (double)CLOCKS_PER_SEC));

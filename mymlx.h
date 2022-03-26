@@ -24,7 +24,9 @@ typedef struct  s_mlx
 
 
         GLFWwindow *window;
+	unsigned int texture;
 	int ID;
+	int VAO;
 }               mlx;
 
 typedef struct	s_fun_and_arg
