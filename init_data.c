@@ -56,7 +56,8 @@ void		ginit(t_global *g)
 	init_vector(g->cam_pos, 0, 100, -200);
 
 	init_vector(&g->white, 1, 1, 1);
-	g->light_switch = 1;
+	g->spec_con = scale(1 / (float)g->lights, g->white);
+	g->light_switch = 0;
 	g->objn = 0;
 	g->prim = 0;
 //	g->obj = (t_object *)malloc(sizeof(t_object) * (g->argc + 1));
@@ -212,8 +213,8 @@ void		init_plane(t_vector *ctr, int i, t_global *g)
 	g->obj[i].ang.y = 0;
 	g->obj[i].ang.z = 0;
 	g->obj[i].re = 0; //0.6 is good
-	g->obj[i].spec = 0;
-	g->obj[i].soft = 0;
+	g->obj[i].spec = 6;
+	g->obj[i].soft = 1;
 	g->obj[i].trans = 0;
 	init_vector(&g->obj[i].base[0], 1, 0, 0);
 	init_vector(&g->obj[i].base[1], 0, 1, 0);
