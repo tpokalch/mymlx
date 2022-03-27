@@ -22,10 +22,10 @@ void		ginit(t_global *g)
 	g->lights = 1;
 	g->li = (t_vector *)malloc(sizeof(t_vector) * g->lights);
 	while(++i < g->lights)
-		init_vector(&g->li[i], 50.2, 102.13, 200.46);
+		init_vector(&g->li[i], 170, 102.13, 600.46);
 //	init_vector(&g->li[0], -800,-400,300);
 //	init_vector(&g->li[1], -200, 400, 100);
-	init_vector(&g->li[0], 295, 585, 800);
+//	init_vector(&g->li[0], 295, 585, 800);
 
 	g->liz = (double *)malloc(sizeof(double) * g->lights); 	
 	i = -1;
